@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Register passkey</title>
+</head>
+
+<body>
+    <h1>Register your passkey</h1>
+    <p>Enter the one-time enrolment code you were given.</p>
+    <input id="code" placeholder="Enrolment code">
+    <button id="btn">Register passkey</button>
+    <p id="msg"></p>
+    <p><a href="/login.html">Go to sign in</a></p>
+
+    <script src="/vendor/simplewebauthn/index.umd.min.js"></script>
+    <script>
+        const { startRegistration } = SimpleWebAuthnBrowser;
+        const post = (url, body) =>
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            });
+
+        document.getElementById('btn').onclick = async () => {
+            const msg = document.getElementById('msg');
+            const code = document.getElementById('code').value.trim();
+            try {
+                const optRes = await post('/api/register/options', { code });
+                const optionsJSON = await optRes.json();
+                if (!optRes.ok) { msg.textContent = optionsJSON.error; return; }
+
+                const response = await startRegistration({ optionsJSON });   // real browser passkey prompt
+
+                const verRes = await post('/api/register/verify', { code, response });
+                const result = await verRes.json();
+                msg.textContent = verRes.ok ? 'Passkey registered. You can now sign in.' : result.error;
+            } catch (e) {
+                msg.textContent = 'Cancelled or failed: ' + e.message;
+            }
+        };
+    </script>
+</body>
+
+</html>

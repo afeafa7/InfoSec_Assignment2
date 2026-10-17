@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Sign in</title>
+</head>
+
+<body>
+    <h1>Sign in with your passkey</h1>
+    <button id="btn">Sign in</button>
+    <p id="msg"></p>
+    <p><a href="/enrol.html">Register a passkey</a></p>
+
+    <script src="/vendor/simplewebauthn/index.umd.min.js"></script>
+    <script>
+        const { startAuthentication } = SimpleWebAuthnBrowser;
+        const post = (url, body) =>
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            });
+
+        document.getElementById('btn').onclick = async () => {
+            const msg = document.getElementById('msg');
+            try {
+                const optRes = await post('/api/login/options', {});
+                const optionsJSON = await optRes.json();
+
+                const response = await startAuthentication({ optionsJSON });  // real browser passkey prompt
+
+                const verRes = await post('/api/login/verify', { response });
+                const result = await verRes.json();
+                if (!verRes.ok) { msg.textContent = result.error; return; }
+                window.location.href = result.role === 'lecturer' ? '/lecturer.html' : '/student.html';
+            } catch (e) {
+                msg.textContent = 'Cancelled or failed: ' + e.message;
+            }
+        };
+    </script>
+</body>
+
+</html>
