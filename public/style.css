@@ -1,0 +1,236 @@
+/* ============================================================
+   style.css  –  shared styles for login, enrol, student,
+                 and lecturer pages
+   Red, white & neutral theme
+   ============================================================ */
+
+/* ---------- Reset & base ---------- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                 Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #1c1c1c;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 48px 16px;
+}
+
+/* Subtle warm-neutral background */
+body::before {
+    content: "";
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(160deg, #fff5f5 0%, #f5f5f5 55%, #fafafa 100%);
+    z-index: -1;
+}
+
+/* ---------- Typography ---------- */
+h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #b71c1c;
+    margin-bottom: 8px;
+    max-width: 560px;
+    width: 100%;
+}
+
+h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #c62828;
+    margin-top: 24px;
+    margin-bottom: 8px;
+    max-width: 560px;
+    width: 100%;
+}
+
+p {
+    max-width: 560px;
+    width: 100%;
+    color: #4a4a4a;
+    margin-bottom: 12px;
+}
+
+a {
+    color: #c62828;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #b71c1c;
+}
+
+/* ---------- Inputs ---------- */
+input[type="text"],
+input[type="number"],
+input:not([type]) {
+    display: block;
+    width: 100%;
+    max-width: 560px;
+    padding: 10px 14px;
+    border: 1.5px solid #d4c5c5;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: #1c1c1c;
+    background: #ffffff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-bottom: 14px;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input:not([type]):focus {
+    outline: none;
+    border-color: #c62828;
+    box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.12);
+}
+
+/* ---------- Buttons (default – primary red) ---------- */
+button {
+    display: inline-block;
+    padding: 10px 22px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+    margin-bottom: 10px;
+    margin-right: 8px;
+    background-color: #c62828;
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(198, 40, 40, 0.28);
+}
+
+button:hover {
+    background-color: #b71c1c;
+    box-shadow: 0 4px 12px rgba(198, 40, 40, 0.38);
+    transform: translateY(-1px);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(198, 40, 40, 0.2);
+}
+
+/* ---------- Student page – red "denial test" buttons (same as primary) ---------- */
+button#other,
+button#edit {
+    background-color: #c62828;
+    box-shadow: 0 2px 6px rgba(198, 40, 40, 0.28);
+}
+
+button#other:hover,
+button#edit:hover {
+    background-color: #b71c1c;
+    box-shadow: 0 4px 12px rgba(198, 40, 40, 0.38);
+}
+
+/* ---------- Grey logout button (student & lecturer pages) ---------- */
+button#logout {
+    background-color: #757575;
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(117, 117, 117, 0.25);
+}
+
+button#logout:hover {
+    background-color: #616161;
+    box-shadow: 0 4px 12px rgba(117, 117, 117, 0.35);
+}
+
+/* ---------- Pre / output blocks ---------- */
+pre {
+    display: block;
+    width: 100%;
+    max-width: 560px;
+    background: #ffffff;
+    border: 1.5px solid #e0d5d5;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo,
+                 Courier, monospace;
+    font-size: 0.85rem;
+    color: #2e2e2e;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin-bottom: 16px;
+    min-height: 40px;
+}
+
+/* ---------- Table (lecturer page) ---------- */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 700px;
+    background: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+    border: none;
+}
+
+th, td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #f0e8e8;
+    font-size: 0.92rem;
+}
+
+thead tr {
+    background-color: #c62828;
+    color: #ffffff;
+}
+
+thead th {
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    border-bottom: none;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr:hover {
+    background-color: #fff5f5;
+}
+
+/* Number inputs inside table cells */
+td input[type="number"] {
+    width: 80px;
+    padding: 6px 10px;
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+
+/* Save buttons inside table cells */
+td button {
+    padding: 6px 16px;
+    font-size: 0.85rem;
+    margin-bottom: 0;
+    margin-right: 0;
+}
+
+/* ---------- Message / status paragraphs ---------- */
+p#msg {
+    min-height: 1.4em;
+    color: #b71c1c;
+    font-size: 0.9rem;
+}

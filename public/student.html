@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Student</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <h1>Student dashboard</h1>
+    <p id="who"></p>
+    <h2>My grades</h2>
+    <pre id="grades"></pre>
+    <h2>Denial tests</h2>
+    <button id="other">Try to view another student's grades</button>
+    <button id="edit">Try to edit a grade</button>
+    <pre id="out"></pre>
+    <button id="logout">Log out</button>
+
+    <script>
+        let me = null;
+        const show = async (res) => {
+            document.getElementById('out').textContent = res.status + ' ' + (await res.text());
+        };
+
+        async function init() {
+            const res = await fetch('/api/me');
+            if (!res.ok) { window.location.href = '/login.html'; return; }
+            me = await res.json();
+            document.getElementById('who').textContent = me.fullName + ' (' + me.userCode + ', ' + me.role + ')';
+            const g = await fetch('/api/students/' + me.id + '/grades');
+            document.getElementById('grades').textContent = JSON.stringify(await g.json(), null, 2);
+        }
+
+        document.getElementById('other').onclick = async () => {
+            const otherId = me.id === 1 ? 2 : 1;           // the other student
+            show(await fetch('/api/students/' + otherId + '/grades'));
+        };
+        document.getElementById('edit').onclick = async () => {
+            show(await fetch('/api/courses/1/grades/' + me.id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ score: 100 }),
+            }));
+        };
+        document.getElementById('logout').onclick = async () => {
+            await fetch('/api/logout', { method: 'POST' });
+            window.location.href = '/login.html';
+        };
+        init();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Lecturer</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <h1>Lecturer dashboard</h1>
+    <p id="who"></p>
+    <table border="1" cellpadding="6">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Score</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+    </table>
+    <p id="msg"></p>
+    <button id="logout">Log out</button>
+
+    <script>
+        let courseId = null;
+
+        async function load() {
+            const meRes = await fetch('/api/me');
+            if (!meRes.ok) { window.location.href = '/login.html'; return; }
+            const me = await meRes.json();
+            if (me.role !== 'lecturer') { window.location.href = '/student.html'; return; }
+            courseId = me.courseId;
+            document.getElementById('who').textContent = me.fullName + ' (' + me.userCode + ', ' + me.role + ')';
+
+            const res = await fetch('/api/courses/' + courseId + '/roster');
+            const roster = await res.json();
+            const tbody = document.getElementById('rows');
+            tbody.innerHTML = '';
+            for (const s of roster) {
+                const tr = document.createElement('tr');
+                const cells = [s.userCode, s.fullName];
+                for (const text of cells) {
+                    const td = document.createElement('td');
+                    td.textContent = text;
+                    tr.appendChild(td);
+                }
+                const scoreTd = document.createElement('td');
+                const input = document.createElement('input');
+                input.type = 'number'; input.min = 0; input.max = 100; input.value = s.score;
+                scoreTd.appendChild(input);
+                tr.appendChild(scoreTd);
+                const btnTd = document.createElement('td');
+                const btn = document.createElement('button');
+                btn.textContent = 'Save';
+                btn.onclick = async () => {
+                    const r = await fetch('/api/courses/' + courseId + '/grades/' + s.studentId, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ score: Number(input.value) }),
+                    });
+                    document.getElementById('msg').textContent = r.status + ' ' + (await r.text());
+                };
+                btnTd.appendChild(btn);
+                tr.appendChild(btnTd);
+                tbody.appendChild(tr);
+            }
+        }
+
+        document.getElementById('logout').onclick = async () => {
+            await fetch('/api/logout', { method: 'POST' });
+            window.location.href = '/login.html';
+        };
+        load();
+    </script>
+</body>
+
+</html>
