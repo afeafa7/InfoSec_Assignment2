@@ -2,14 +2,13 @@ import crypto from 'crypto';
 
 const note = 'Student consultation note – demonstration data only';
 
-// A new random key and a new random nonce (IV) every time we run this.
-const key = crypto.randomBytes(32);   // 256-bit key
-const iv = crypto.randomBytes(12);    // 12-byte nonce, never reuse with the same key
+const key = crypto.randomBytes(32);
+const iv = crypto.randomBytes(12);
 
 // Encrypt
 const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
 const ciphertext = Buffer.concat([cipher.update(note, 'utf8'), cipher.final()]);
-const tag = cipher.getAuthTag();   // the integrity check value
+const tag = cipher.getAuthTag();
 
 function decrypt(data) {
     const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);

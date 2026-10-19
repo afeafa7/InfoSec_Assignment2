@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-// ---- Check: is the person signed in? ----
+// Check if the user is signed in.
 function requireAuth(req, res, next) {
     const token = req.cookies.session;
     const user = token ? q.getSessionUser(token) : null;
@@ -19,7 +19,7 @@ function requireAuth(req, res, next) {
     next();
 }
 
-// ---- Check: does the person have the right role? ----
+// Check if the user has the right role.
 function requireRole(role) {
     return (req, res, next) => {
         if (req.user.role !== role) return res.status(403).json({ error: 'Access denied' });
@@ -27,7 +27,7 @@ function requireRole(role) {
     };
 }
 
-// Passkey registration and login routes (Person 2's file)
+// Passkey registration and login routes
 app.use('/api', authRoutes);
 
 app.post('/api/logout', requireAuth, (req, res) => {
@@ -41,7 +41,7 @@ app.get('/api/me', requireAuth, (req, res) => {
     res.json({ ...req.user, courseId: course ? course.id : null });
 });
 
-// Student: only their own grades. Lecturer: only students in their own course.
+
 app.get('/api/students/:id/grades', requireAuth, (req, res) => {
     const studentId = Number(req.params.id);
     if (!Number.isInteger(studentId)) return res.status(400).json({ error: 'Bad request' });
@@ -58,7 +58,7 @@ app.get('/api/students/:id/grades', requireAuth, (req, res) => {
     res.json(q.getGradesForStudent(studentId));
 });
 
-// Lecturer only, and only for their own course.
+
 app.get('/api/courses/:id/roster', requireAuth, requireRole('lecturer'), (req, res) => {
     const courseId = Number(req.params.id);
     const course = q.getCourseForLecturer(req.user.id);
@@ -66,7 +66,7 @@ app.get('/api/courses/:id/roster', requireAuth, requireRole('lecturer'), (req, r
     res.json(q.getRoster(courseId));
 });
 
-// Lecturer only, only their own course, only students enrolled in it.
+
 app.put(
     '/api/courses/:courseId/grades/:studentId',
     requireAuth,
@@ -93,7 +93,7 @@ app.put(
     }
 );
 
-// Web pages, and the browser half of the passkey library
+
 app.use(
     '/vendor/simplewebauthn',
     express.static(path.join(__dirname, 'node_modules/@simplewebauthn/browser/dist/bundle'))
